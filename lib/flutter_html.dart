@@ -34,6 +34,7 @@ class Html extends StatelessWidget {
   Html({
     Key key,
     @required this.data,
+    this.minimumFontSize,
     this.onLinkTap,
     this.customRender,
     this.onImageError,
@@ -48,6 +49,7 @@ class Html extends StatelessWidget {
   final OnTap onLinkTap;
   final ImageErrorListener onImageError;
   final bool shrinkWrap;
+  final double minimumFontSize;
 
   /// Properties for the Image widget that gets rendered by the rich text parser
   final OnTap onImageTap;
@@ -82,6 +84,7 @@ class Html extends StatelessWidget {
         customRender: customRender,
         blacklistedElements: blacklistedElements,
         navigationDelegateForIframe: navigationDelegateForIframe,
+        minimumFontSize: minimumFontSize,
       ),
     );
   }

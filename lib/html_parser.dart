@@ -29,7 +29,7 @@ class HtmlParser extends StatelessWidget {
   final OnTap onImageTap;
   final ImageErrorListener onImageError;
   final bool shrinkWrap;
-
+  final double minimumFontSize;
   final Map<String, Style> style;
   final Map<String, CustomRender> customRender;
   final List<String> blacklistedElements;
@@ -45,6 +45,7 @@ class HtmlParser extends StatelessWidget {
     this.customRender,
     this.blacklistedElements,
     this.navigationDelegateForIframe,
+    this.minimumFontSize,
   });
 
   @override
@@ -57,7 +58,7 @@ class HtmlParser extends StatelessWidget {
       navigationDelegateForIframe,
     );
     StyledElement styledTree = applyCSS(lexedTree);
-    StyledElement inlineStyledTree = applyInlineStyles(styledTree);
+    StyledElement inlineStyledTree = applyInlineStyles(styledTree, minimumFontSize);
     StyledElement customStyledTree = _applyCustomStyles(inlineStyledTree);
     StyledElement cascadedStyledTree = _cascadeStyles(customStyledTree);
     StyledElement cleanedTree = cleanTree(cascadedStyledTree);
@@ -178,12 +179,12 @@ class HtmlParser extends StatelessWidget {
     return tree;
   }
 
-  static StyledElement applyInlineStyles(StyledElement tree) {
+  static StyledElement applyInlineStyles(StyledElement tree, double minimumFontSize) {
     if (tree.attributes.containsKey("style")) {
-      tree.style = tree.style.merge(inlineCSSToStyle(tree.attributes['style']));
+      tree.style = tree.style.merge(inlineCSSToStyle(tree.attributes['style'], minimumFontSize: minimumFontSize));
     }
 
-    tree.children?.forEach(applyInlineStyles);
+    tree.children?.forEach((child) => applyInlineStyles(child, minimumFontSize));
     return tree;
   }
 

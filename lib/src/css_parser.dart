@@ -1,10 +1,13 @@
 import 'dart:ui';
 
-import 'package:csslib/visitor.dart' as css;
 import 'package:csslib/parser.dart' as cssparser;
+import 'package:csslib/visitor.dart' as css;
 import 'package:flutter_html/style.dart';
 
-Style declarationsToStyle(Map<String, List<css.Expression>> declarations) {
+import '../style.dart';
+
+Style declarationsToStyle(
+    Map<String, List<css.Expression>> declarations, double minimumFontSize) {
   Style style = new Style();
   declarations.forEach((property, value) {
     switch (property) {
@@ -18,16 +21,26 @@ Style declarationsToStyle(Map<String, List<css.Expression>> declarations) {
       case 'text-align':
         style.textAlign = ExpressionMapping.expressionToTextAlign(value.first);
         break;
-
+      case 'font-size':
+        style.fontSize = ExpressionMapping.expressionToFontSize(
+            value.first, minimumFontSize);
+        break;
+      case 'font-family':
+        style.fontFamily =
+            ExpressionMapping.expressionToFontFamily(value.first);
+        break;
     }
   });
   return style;
 }
 
-Style inlineCSSToStyle(String inlineStyle) {
+Style inlineCSSToStyle(
+  String inlineStyle, {
+  double minimumFontSize,
+}) {
   final sheet = cssparser.parse("*{$inlineStyle}");
   final declarations = DeclarationVisitor().getDeclarations(sheet);
-  return declarationsToStyle(declarations);
+  return declarationsToStyle(declarations, minimumFontSize);
 }
 
 class DeclarationVisitor extends css.Visitor {
@@ -112,7 +125,7 @@ class ExpressionMapping {
 
   static TextAlign expressionToTextAlign(css.Expression value) {
     if (value is css.LiteralTerm) {
-      switch(value.text) {
+      switch (value.text) {
         case "center":
           return TextAlign.center;
         case "left":
@@ -128,5 +141,24 @@ class ExpressionMapping {
       }
     }
     return TextAlign.start;
+  }
+
+  static FontSize expressionToFontSize(
+      css.Expression value, double minimumFontSize) {
+    if (value is css.LiteralTerm) {
+      var fontSize = (value.value as int).toDouble();
+      if (fontSize < minimumFontSize) {
+        fontSize = minimumFontSize;
+      }
+      return FontSize(fontSize);
+    }
+    return null;
+  }
+
+  static String expressionToFontFamily(css.Expression value) {
+    if (value is css.LiteralTerm) {
+      return value.text;
+    }
+    return null;
   }
 }
