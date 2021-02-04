@@ -146,7 +146,7 @@ class ExpressionMapping {
   static FontSize expressionToFontSize(
       css.Expression value, double minimumFontSize) {
     if (value is css.LiteralTerm) {
-      var fontSize = (value.value as int).toDouble();
+      var fontSize = (value.value as num).toDouble();
       if (fontSize < minimumFontSize) {
         fontSize = minimumFontSize;
       }

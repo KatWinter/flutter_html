@@ -45,7 +45,7 @@ class HtmlParser extends StatelessWidget {
     this.customRender,
     this.blacklistedElements,
     this.navigationDelegateForIframe,
-    this.minimumFontSize,
+    this.minimumFontSize = 16.0,
   });
 
   @override

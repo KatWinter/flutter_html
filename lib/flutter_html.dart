@@ -34,7 +34,7 @@ class Html extends StatelessWidget {
   Html({
     Key key,
     @required this.data,
-    this.minimumFontSize,
+    this.minimumFontSize = 16.0,
     this.onLinkTap,
     this.customRender,
     this.onImageError,
